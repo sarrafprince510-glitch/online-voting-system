@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Online Voting System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000;--card:#0b0b0b;--ink:#fff;--mute:#a1a1aa;--line:#262626;--edge:#fff;--pop:#3b66f0;--accent:#6f93ff;--accent-ink:#000;--soft:#161616;--ok:#5eead4;--okbg:#0b2a27;--bad:#fda4af;--badbg:#3b1424;--bar:#27304d;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--card:#0b0b0b;--ink:#fff;--mute:#a1a1aa;--line:#262626;--edge:#fff;--pop:#3b66f0;--accent:#6f93ff;--accent-ink:#000;--soft:#161616;--ok:#5eead4;--okbg:#0b2a27;--bad:#fda4af;--badbg:#3b1424;--bar:#27304d}}
+:root[data-theme="dark"]{--bg:#000;--card:#0b0b0b;--ink:#fff;--mute:#a1a1aa;--line:#262626;--edge:#fff;--pop:#3b66f0;--accent:#6f93ff;--accent-ink:#000;--soft:#161616;--ok:#5eead4;--okbg:#0b2a27;--bad:#fda4af;--badbg:#3b1424;--bar:#27304d}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+header{background:var(--card);border-bottom:1px solid var(--line)}
+.in{max-width:760px;margin:0 auto;padding:0 20px}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;padding-top:28px}
+h1{font-size:22px;font-weight:600;letter-spacing:-.01em;margin:0}
+.meta{color:var(--mute);font-size:13px;margin:4px 0 0}
+.stats{color:var(--mute);font-size:13px}.stats b{color:var(--ink);font-weight:600}
+nav{display:flex;gap:24px;margin-top:20px;overflow-x:auto}
+nav button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 0;font:500 14px inherit;font-family:inherit;color:var(--mute);cursor:pointer;white-space:nowrap}
+nav button:hover{color:var(--ink)}
+nav button[aria-selected=true]{color:var(--accent);border-color:var(--accent)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{padding:32px 20px 56px}
+.panel{display:none}.panel.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:28px}
+h2{font-size:16px;font-weight:600;margin:0 0 4px}
+.desc{color:var(--mute);font-size:13px;margin:0 0 20px}
+label.f{display:block;font-size:13px;font-weight:500;margin:16px 0 6px}
+input[type=text],input[type=number],input:not([type]){width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--card);color:var(--ink);font:inherit}
+input::placeholder{color:#9ca3af}
+.btn{margin-top:22px;background:var(--accent);color:var(--accent-ink);border:0;border-radius:4px;padding:10px 20px;font:500 14px inherit;font-family:inherit;cursor:pointer}
+.btn:hover{opacity:.9}
+.msg{margin-top:16px;padding:10px 12px;border-radius:4px;font-size:13px;display:none;border:1px solid}
+.msg.ok{display:block;background:var(--okbg);color:var(--ok);border-color:var(--ok)}
+.msg.bad{display:block;background:var(--badbg);color:var(--bad);border-color:var(--bad)}
+.cands{margin-top:20px;border:1px solid var(--line);border-radius:4px}
+.cand{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--line)}
+.cand:last-child{border-bottom:0}
+.cand:has(input:checked){background:var(--soft)}
+.cand input{margin:0;width:16px;height:16px;accent-color:var(--accent)}
+.cand small{color:var(--mute);margin-left:6px}
+.res{padding:14px 0;border-bottom:1px solid var(--line)}
+.res:first-of-type{padding-top:0}
+.row{display:flex;justify-content:space-between;gap:10px;font-weight:500}
+.row small{color:var(--mute);font-weight:400;margin-left:6px}
+.row .n{font-variant-numeric:tabular-nums}
+.bar{height:6px;border-radius:3px;background:var(--soft);margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--bar);transition:width .4s}
+.res.top .bar i{background:var(--accent)}
+.lead{margin-top:18px;font-size:13px;color:var(--mute)}.lead b{color:var(--ink);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+th,td{text-align:left;padding:11px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--mute);font-weight:500;font-size:12px}
+.scroll{overflow-x:auto}
+.tag{font-size:12px;font-weight:500;color:var(--mute)}.tag.y{color:var(--ok)}
+.reset{background:none;border:1px solid var(--line);color:var(--mute);border-radius:4px;padding:7px 12px;font:inherit;font-size:13px;cursor:pointer;margin-top:20px}
+.reset:hover{color:var(--bad);border-color:var(--bad)}
+footer{color:var(--mute);font-size:12px;text-align:center;padding:0 20px 32px}
+
+body{background:var(--bg)}
+header{background:#000;border-bottom:3px solid #3b66f0;color:#fff}
+h1{color:#fff;font-size:30px;font-weight:800;letter-spacing:-.02em}
+.meta{color:#a1a1aa}.stats{color:#a1a1aa}.stats b{color:#fff;font-size:15px}
+nav button{color:#a1a1aa;font-weight:600}nav button:hover{color:#fff}
+nav button[aria-selected=true]{color:#fff;border-color:#3b66f0;border-bottom-width:3px}
+button:focus-visible,input:focus-visible{outline-color:var(--pop)}
+.card{border:2px solid var(--edge);border-radius:14px;box-shadow:6px 6px 0 #3b66f0}
+h2{font-size:21px;font-weight:800}
+input[type=text],input[type=number],input:not([type]){border:2px solid var(--edge);border-radius:10px}
+input::placeholder{color:#9aa0c0}
+.btn{background:#3b66f0;color:#fff;border:2px solid var(--edge);border-radius:10px;font-weight:700;box-shadow:3px 3px 0 var(--edge);transition:transform .1s,box-shadow .1s}
+.btn:hover{opacity:1;transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--edge)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--edge)}
+.msg{border-width:2px;border-radius:10px;font-weight:500}
+.cands{border:2px solid var(--edge);border-radius:12px;overflow:hidden}
+.cand:has(input:checked){background:#3b66f0;color:#fff}.cand:has(input:checked) small{color:#dbe4ff}
+.cand input{accent-color:#fff}
+.bar{height:12px;border-radius:99px;border:2px solid var(--edge);background:var(--card)}
+.bar i{border-radius:99px}
+.res.top .row span:first-child{font-weight:700}
+.tag{padding:2px 10px;border-radius:99px;background:var(--soft);font-weight:600}.tag.y{background:#3b66f0;color:#fff}
+th{color:var(--accent);font-weight:700}
+.reset{border:2px solid var(--edge);border-radius:10px;font-weight:600}
+h1,h2,.btn,nav button{font-family:Outfit,Inter,system-ui,sans-serif}
+:root{color-scheme:dark}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <div class="top">
+    <div><h1>Online Voting System</h1><p class="meta">Core Java OOP project &middot; Prince Kumar Soni &middot; Chennai Institute of Technology</p></div>
+    <div class="stats"><b id="sV">0</b> registered &nbsp;&middot;&nbsp; <b id="sC">0</b> votes cast</div>
+  </div>
+  <nav role="tablist">
+    <button role="tab" aria-selected="true" data-t="reg">Register</button>
+    <button role="tab" aria-selected="false" data-t="vote">Cast vote</button>
+    <button role="tab" aria-selected="false" data-t="res">Results</button>
+    <button role="tab" aria-selected="false" data-t="vot">Voters</button>
+  </nav>
+</div></header>
+
+<main class="in">
+  <section class="panel on" id="reg"><div class="card">
+    <h2>Register as voter</h2><p class="desc">You must be 18 or older. Voter IDs are not case-sensitive.</p>
+    <label class="f" for="rid">Voter ID</label><input id="rid" placeholder="V001" autocomplete="off">
+    <label class="f" for="rname">Full name</label><input id="rname" autocomplete="off">
+    <label class="f" for="rage">Age</label><input id="rage" type="number" inputmode="numeric">
+    <button class="btn" id="regBtn">Register</button>
+    <div class="msg" id="regMsg" role="status"></div>
+  </div></section>
+
+  <section class="panel" id="vote"><div class="card">
+    <h2>Cast your vote</h2><p class="desc">Each registered voter can vote once.</p>
+    <label class="f" for="vid">Voter ID</label><input id="vid" placeholder="V001" autocomplete="off">
+    <div class="cands" id="cands" role="radiogroup" aria-label="Candidates"></div>
+    <button class="btn" id="voteBtn">Cast vote</button>
+    <div class="msg" id="voteMsg" role="status"></div>
+  </div></section>
+
+  <section class="panel" id="res"><div class="card">
+    <h2>Results</h2><p class="desc">Ranked by votes received.</p><div id="resBody"></div>
+  </div></section>
+
+  <section class="panel" id="vot"><div class="card">
+    <h2>Registered voters</h2><p class="desc">Voter list and voting status.</p>
+    <div class="scroll"><table><thead><tr><th>Voter ID</th><th>Name</th><th>Age</th><th>Status</th></tr></thead><tbody id="vBody"></tbody></table></div>
+    <button class="reset" id="resetBtn">Reset all data</button>
+  </div></section>
+</main>
+<footer>Data is stored in this browser only.</footer>
+
+<script>
+const KEY = "voting-state-v1";
+const CANDS = [
+  {id:1,name:"Aditi Rao",party:"Green Party",color:"#d4568a"},
+  {id:2,name:"Rohan Mehta",party:"Unity Party",color:"#3b66f0"},
+  {id:3,name:"Sara Khan",party:"Progress Party",color:"#ffffff"}
+];
+let state = {voters:[], votes:{1:0,2:0,3:0}};
+try { const s = localStorage.getItem(KEY); if (s) state = JSON.parse(s); } catch(e){}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} };
+const findVoter = id => state.voters.find(v => v.id.toLowerCase() === id.toLowerCase());
+
+function registerVoter(id, name, age){
+  if (age < 18) return "REJECTED: Voter must be 18 or older to register.";
+  if (findVoter(id)) return "REJECTED: Voter ID already registered.";
+  state.voters.push({id, name, age, voted:false}); save();
+  return "SUCCESS: Voter registered.";
+}
+function castVote(id, cid){
+  const v = findVoter(id);
+  if (!v) return "REJECTED: No such registered voter. Please register first.";
+  if (v.voted) return "REJECTED: This voter has already voted. Duplicate voting is not allowed.";
+  const c = CANDS.find(c => c.id === cid);
+  if (!c) return "REJECTED: No such candidate.";
+  state.votes[cid]++; v.voted = true; save();
+  return "SUCCESS: Vote cast for " + c.name + ".";
+}
+
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function show(el, r){ el.textContent = r.replace(/^(SUCCESS|REJECTED): /,""); el.className = "msg " + (r.startsWith("SUCCESS") ? "ok" : "bad"); }
+
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("nav button").forEach(x => x.setAttribute("aria-selected", x === b));
+  document.querySelectorAll(".panel").forEach(p => p.classList.toggle("on", p.id === b.dataset.t));
+});
+
+$("cands").innerHTML = CANDS.map(c => `<label class="cand"><input type="radio" name="cand" value="${c.id}"><span>${esc(c.name)}<small>${esc(c.party)}</small></span></label>`).join("");
+
+$("regBtn").onclick = () => {
+  const id = $("rid").value.trim(), name = $("rname").value.trim(), age = parseInt($("rage").value, 10);
+  if (!id || !name) return show($("regMsg"), "REJECTED: Enter a voter ID and name.");
+  if (isNaN(age)) return show($("regMsg"), "REJECTED: Enter a valid age.");
+  const r = registerVoter(id, name, age);
+  show($("regMsg"), r);
+  if (r.startsWith("SUCCESS")) { $("rid").value = $("rname").value = $("rage").value = ""; }
+  render();
+};
+$("voteBtn").onclick = () => {
+  const id = $("vid").value.trim(), pick = document.querySelector('input[name=cand]:checked');
+  if (!id) return show($("voteMsg"), "REJECTED: Enter your voter ID.");
+  if (!pick) return show($("voteMsg"), "REJECTED: Choose a candidate.");
+  const r = castVote(id, +pick.value);
+  show($("voteMsg"), r);
+  if (r.startsWith("SUCCESS")) { pick.checked = false; $("vid").value = ""; }
+  render();
+};
+$("resetBtn").onclick = () => {
+  if (!confirm("Delete all voters and votes?")) return;
+  state = {voters:[], votes:{1:0,2:0,3:0}}; save(); render();
+};
+
+function render(){
+  const total = CANDS.reduce((s,c) => s + state.votes[c.id], 0);
+  $("sV").textContent = state.voters.length; $("sC").textContent = total;
+  const sorted = [...CANDS].sort((a,b) => state.votes[b.id] - state.votes[a.id]);
+  const top = state.votes[sorted[0].id];
+  const leaders = sorted.filter(c => state.votes[c.id] === top);
+  const lead = total === 0 ? "No votes cast yet." : leaders.length > 1 ? "Tie: <b>" + leaders.map(c => esc(c.name)).join(", ") + "</b>" : "Leading: <b>" + esc(leaders[0].name) + "</b>";
+  $("resBody").innerHTML = sorted.map(c => {
+    const n = state.votes[c.id], p = total ? n / total * 100 : 0;
+    return `<div class="res${total && n === top ? " top" : ""}"><div class="row"><span>${esc(c.name)}<small>${esc(c.party)}</small></span><span class="n">${n} &middot; ${p.toFixed(0)}%</span></div><div class="bar"><i style="width:${p}%;background:${c.color}"></i></div></div>`;
+  }).join("") + `<p class="lead">${lead}</p>`;
+  $("vBody").innerHTML = state.voters.length ? state.voters.map(v => `<tr><td>${esc(v.id)}</td><td>${esc(v.name)}</td><td>${v.age}</td><td><span class="tag ${v.voted?"y":""}">${v.voted?"Voted":"Not voted"}</span></td></tr>`).join("") : `<tr><td colspan="4" style="color:var(--mute)">No voters yet. Register one to get started.</td></tr>`;
+}
+render();
+</script>
+</body>
+</html>
